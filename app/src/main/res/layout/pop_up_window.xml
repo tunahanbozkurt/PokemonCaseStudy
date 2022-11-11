@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/pop_up_window"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:gravity="center">
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/image_front"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            tools:layout_editor_absoluteX="107dp"
+            tools:layout_editor_absoluteY="243dp"
+            android:contentDescription="" />
+
+        <ImageView
+            android:id="@+id/image_back"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            tools:layout_editor_absoluteX="225dp"
+            tools:layout_editor_absoluteY="243dp"
+            android:contentDescription="" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/pokemon_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pikachu"
+        android:textColor="@color/black"/>
+
+    <Button
+        android:id="@+id/remove_overlay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Close Window"/>
+
+</LinearLayout>

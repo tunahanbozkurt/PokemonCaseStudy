@@ -1,7 +1,6 @@
 package com.example.pokemoncasestudy.presentation.permission_screen
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -13,16 +12,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import com.example.pokemoncasestudy.MainActivity
+import com.example.pokemoncasestudy.presentation.MainActivity
 import com.example.pokemoncasestudy.R
-import com.example.pokemoncasestudy.databinding.ActivityMainBinding
 import com.example.pokemoncasestudy.databinding.FragmentPermissionScreenBinding
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 
 class PermissionScreenFragment : Fragment() {

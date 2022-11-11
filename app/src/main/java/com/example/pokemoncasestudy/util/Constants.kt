@@ -5,3 +5,5 @@ package com.example.pokemoncasestudy.util
 
 const val BASE_URL = "https://pokeapi.co/api/v2/"
 const val POKEMON_ENDPOINT = "pokemon"
+const val URL = "url"
+const val POKEMON_DETAIL_FRAGMENT = "pokemon_detail_fragment"

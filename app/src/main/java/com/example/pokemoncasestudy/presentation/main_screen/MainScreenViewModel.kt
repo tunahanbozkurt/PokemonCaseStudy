@@ -1,22 +1,34 @@
 package com.example.pokemoncasestudy.presentation.main_screen
 
 import androidx.lifecycle.ViewModel
-import com.example.pokemoncasestudy.data.remote.dao.getPokemons.Pokemon
+import androidx.lifecycle.viewModelScope
+import com.example.pokemoncasestudy.domain.model.Pokemon
 import com.example.pokemoncasestudy.domain.repository.PokemonListRepository
+import com.example.pokemoncasestudy.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor (
-    private val repo: PokemonListRepository
+    private val listRepo: PokemonListRepository,
 ) : ViewModel() {
 
-    var pokemonListState = MutableStateFlow(arrayListOf<Pokemon>())
+    var pokemonDTOListState = MutableStateFlow<ArrayList<Pokemon?>>(arrayListOf())
         private set
 
-    fun collectPokemons() {
-
+    fun getPokemonList() {
+        viewModelScope.launch {
+            listRepo.getPokemonList().collect {
+                when(it) {
+                    is Resource.Error -> {}
+                    is Resource.Loading -> {}
+                    is Resource.Success -> {
+                        it.data?.let { pokemonDTOListState.value = it }
+                    }
+                }
+            }
+        }
     }
-
 }

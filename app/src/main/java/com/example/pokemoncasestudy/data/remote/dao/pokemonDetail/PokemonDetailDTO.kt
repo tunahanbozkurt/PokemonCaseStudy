@@ -1,9 +1,10 @@
 package com.example.pokemoncasestudy.data.remote.dao.pokemonDetail
 
 
+import com.example.pokemoncasestudy.domain.model.PokemonDetail
 import com.google.gson.annotations.SerializedName
 
-data class PokemonDetailDAO(
+data class PokemonDetailDTO(
     @SerializedName("abilities")
     val abilities: List<Ability>?,
     @SerializedName("base_experience")
@@ -11,11 +12,11 @@ data class PokemonDetailDAO(
     @SerializedName("forms")
     val forms: List<Form>?,
     @SerializedName("game_indices")
-    val gameİndices: List<Gameİndice>?,
+    val gameIndices: List<Gameİndice>?,
     @SerializedName("height")
     val height: Int?,
     @SerializedName("held_items")
-    val heldİtems: List<Any>?,
+    val heldItems: List<Any>?,
     @SerializedName("id")
     val id: Int?,
     @SerializedName("is_default")
@@ -40,4 +41,15 @@ data class PokemonDetailDAO(
     val types: List<Type>?,
     @SerializedName("weight")
     val weight: Int?
-)
+) {
+
+    fun toPokemonDetail(): PokemonDetail {
+        return PokemonDetail(
+            name = name,
+            height = height.toString(),
+            weight = weight.toString(),
+            backImgUrl = sprites?.backDefault,
+            frontImgUrl = sprites?.frontDefault
+        )
+    }
+}

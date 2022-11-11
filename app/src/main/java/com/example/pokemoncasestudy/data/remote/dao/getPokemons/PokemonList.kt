@@ -3,7 +3,7 @@ package com.example.pokemoncasestudy.data.remote.dao.getPokemons
 
 import com.google.gson.annotations.SerializedName
 
-data class PokemonListDAO(
+data class PokemonList(
     @SerializedName("count")
     val count: Int?,
     @SerializedName("next")
@@ -11,5 +11,5 @@ data class PokemonListDAO(
     @SerializedName("previous")
     val previous: Any?,
     @SerializedName("results")
-    val results: List<Pokemon?>?
+    val results: ArrayList<PokemonDTO?>?
 )

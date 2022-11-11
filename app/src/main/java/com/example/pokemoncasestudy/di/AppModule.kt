@@ -1,7 +1,9 @@
 package com.example.pokemoncasestudy.di
 
-import com.example.pokemoncasestudy.data.remote.PokemonAPI
+import com.example.pokemoncasestudy.data.remote.network.PokemonAPI
+import com.example.pokemoncasestudy.data.remote.repository.PokemonDetailRepositoryImpl
 import com.example.pokemoncasestudy.data.remote.repository.PokemonListRepositoryImpl
+import com.example.pokemoncasestudy.domain.repository.PokemonDetailRepository
 import com.example.pokemoncasestudy.domain.repository.PokemonListRepository
 import com.example.pokemoncasestudy.util.BASE_URL
 import dagger.Module
@@ -30,6 +32,14 @@ object AppModule {
     @Singleton
     fun providePokemonListRepository(api: PokemonAPI): PokemonListRepository {
         return PokemonListRepositoryImpl(
+            api = api
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun providePokemonDetailRepository(api: PokemonAPI): PokemonDetailRepository {
+        return PokemonDetailRepositoryImpl(
             api = api
         )
     }

@@ -1,7 +1,7 @@
-package com.example.pokemoncasestudy.data.remote
+package com.example.pokemoncasestudy.data.remote.network
 
-import com.example.pokemoncasestudy.data.remote.dao.getPokemons.PokemonListDAO
-import com.example.pokemoncasestudy.data.remote.dao.pokemonDetail.PokemonDetailDAO
+import com.example.pokemoncasestudy.data.remote.dao.getPokemons.PokemonList
+import com.example.pokemoncasestudy.data.remote.dao.pokemonDetail.PokemonDetailDTO
 import com.example.pokemoncasestudy.util.POKEMON_ENDPOINT
 import retrofit2.Response
 import retrofit2.http.GET
@@ -14,10 +14,10 @@ interface PokemonAPI {
     suspend fun getPokemonList(
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int
-    ): Response<PokemonListDAO>
+    ): Response<PokemonList>
 
     @GET("$POKEMON_ENDPOINT/{page}/")
     suspend fun getPokemonDetails(
-        @Path("page") page: Int
-    ): Response<PokemonDetailDAO>
+        @Path("page") page: String
+    ): Response<PokemonDetailDTO>
 }

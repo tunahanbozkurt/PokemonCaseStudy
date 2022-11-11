@@ -1,7 +1,7 @@
 package com.example.pokemoncasestudy.data.remote.repository
 
-import com.example.pokemoncasestudy.data.remote.PokemonAPI
-import com.example.pokemoncasestudy.data.remote.dao.getPokemons.Pokemon
+import com.example.pokemoncasestudy.data.remote.network.PokemonAPI
+import com.example.pokemoncasestudy.domain.model.Pokemon
 import com.example.pokemoncasestudy.domain.repository.PokemonListRepository
 import com.example.pokemoncasestudy.util.Resource
 import kotlinx.coroutines.CoroutineDispatcher
@@ -17,26 +17,21 @@ class PokemonListRepositoryImpl(
 ): PokemonListRepository {
 
     private var offSet = 0
-    private val pokemonList = arrayListOf<Pokemon>()
 
-    override suspend fun getPokemonList(): Flow<Resource<ArrayList<Pokemon>>> = flow {
-        emit(Resource.Loading<ArrayList<Pokemon>>())
+    override suspend fun getPokemonList(): Flow<Resource<ArrayList<Pokemon?>>> = flow {
+        emit(Resource.Loading())
         try {
             val response = api.getPokemonList(offset = offSet)
             if (response.isSuccessful) {
                 offSet += 20
+
                 val results = response.body()?.results
-                results?.let { pokeList ->
-                    pokeList.forEach { pokemon ->
-                        if (pokemon != null) {
-                            pokemonList.add(pokemon)
-                        }
-                    }
-                }
+                val convertedResults = results?.map { it?.toPokemon() }
+                val convertedResultsArray = convertedResults?.let { ArrayList(it) }
+                emit(Resource.Success(convertedResultsArray))
 
-                emit(Resource.Success(pokemonList))
             }else {
-
+                emit(Resource.Error("Unexpected error"))
             }
         }
         catch (e: HttpException) {
