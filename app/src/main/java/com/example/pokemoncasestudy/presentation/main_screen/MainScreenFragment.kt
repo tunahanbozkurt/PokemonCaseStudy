@@ -5,16 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.pokemoncasestudy.R
 import com.example.pokemoncasestudy.databinding.FragmentMainScreenBinding
 import com.example.pokemoncasestudy.domain.model.Pokemon
 import com.example.pokemoncasestudy.presentation.main_screen.adapter.PokemonListAdapter
@@ -30,7 +26,6 @@ class MainScreenFragment : Fragment() {
     private var pokemonList: ArrayList<Pokemon> = arrayListOf()
     private lateinit var adapter: PokemonListAdapter
     private lateinit var layoutManager: LinearLayoutManager
-    private var isConnected: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,8 +40,6 @@ class MainScreenFragment : Fragment() {
     }
 
     private fun prepareView() {
-
-        updateDrawer()
 
         setUpRecyclerViewAdapter()
 
@@ -88,6 +81,7 @@ class MainScreenFragment : Fragment() {
 
         if (!viewModel.isOnline()) {
             binding.connectionError.visibility = View.VISIBLE
+            // return means do not send getPokemonList() request and the others, if there is no internet connection
             return
         }else {
             binding.connectionError.visibility = View.GONE
@@ -121,16 +115,5 @@ class MainScreenFragment : Fragment() {
         }
         binding.pokemonRecycler.layoutManager = layoutManager
         binding.pokemonRecycler.adapter = adapter
-    }
-
-    /**
-     * Updates drawer
-     */
-    private fun updateDrawer() {
-        val drawerLayout = activity?.findViewById<DrawerLayout>(R.id.drawer_layout)
-        val toggle = ActionBarDrawerToggle(activity, drawerLayout, R.string.open, R.string.close)
-        drawerLayout?.addDrawerListener(toggle)
-        toggle.syncState()
-        (activity as AppCompatActivity?)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 }

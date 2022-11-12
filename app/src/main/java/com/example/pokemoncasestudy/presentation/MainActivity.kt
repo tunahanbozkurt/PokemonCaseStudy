@@ -1,14 +1,10 @@
 package com.example.pokemoncasestudy.presentation
 
 import android.os.Bundle
-import android.view.MenuItem
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
+import androidx.navigation.ui.setupWithNavController
 import com.example.pokemoncasestudy.R
 import com.example.pokemoncasestudy.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,8 +14,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var navController: NavController
-    lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,20 +21,28 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
+        setupNavigationComponents()
+        navigationSelectedListener()
+    }
+
+    /**
+     * Setups navigation structure for the rest of the app
+     */
+    private fun setupNavigationComponents() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navController = navHostFragment.findNavController()
-        val configuration = AppBarConfiguration(
-            topLevelDestinationIds = setOf(R.id.mainScreenFragment, R.id.permissionScreenFragment)
-        )
+        val navController = navHostFragment.navController
+        val appBarConfiguration = AppBarConfiguration.Builder(setOf(R.id.mainScreenFragment))
+            .setOpenableLayout(binding.drawerLayout)
+            .build()
+
         setSupportActionBar(binding.toolbar)
-        setupActionBarWithNavController(navController, configuration)
+        binding.toolbar.setupWithNavController(navController, appBarConfiguration)
+    }
 
-        toggle = ActionBarDrawerToggle(this, binding.drawerLayout, R.string.open, R.string.close)
-        binding.drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
+    /**
+     * Listens for navigation drawer menu items click activity
+     */
+    private fun navigationSelectedListener() {
         binding.navView.setNavigationItemSelectedListener {
             when(it.itemId) {
                 R.id.close_app -> {
@@ -49,17 +51,5 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (toggle.onOptionsItemSelected(item)) {
-            return true
-        }
-        return super.onOptionsItemSelected(item)
-
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        return navController.navigateUp() || super.onSupportNavigateUp()
     }
 }
