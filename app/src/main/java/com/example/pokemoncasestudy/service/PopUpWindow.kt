@@ -74,10 +74,23 @@ class PopUpWindow(val context: Context, data: PopUpWindowData) {
         }
     }
     /**
-     * Closes popUpWindow
+     * Closes popUpWindow and service
      */
     fun close() {
         context.stopService(Intent(context, OverlayForegroundService::class.java))
+        try {
+            windowManager.removeView(popUpWindow)
+            popUpWindow.invalidate()
+            popUpViewGroup?.removeAllViews()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Removes the current window
+     */
+    fun remove() {
         try {
             windowManager.removeView(popUpWindow)
             popUpWindow.invalidate()

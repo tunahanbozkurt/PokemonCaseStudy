@@ -9,9 +9,11 @@
     <string name="content_description">description</string>
     <string name="close_application">Close Application</string>
     <string name="try_again">Try Again</string>
-    <string name="connection_error">No internet connection.</string>
     <string name="pokemons">Pokemons</string>
     <string name="pokemon_details">Pokemon Details</string>
+
+    <string name="connection_error">Connection failed</string>
+    <string name="unexpected_error">Unexpected error</string>
 
     <string name="open">Open</string>
     <string name="close">Close</string>

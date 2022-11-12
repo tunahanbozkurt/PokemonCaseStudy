@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.example.pokemoncasestudy.R
 import com.example.pokemoncasestudy.databinding.FragmentPokemonDetailScreenBinding
@@ -19,6 +21,7 @@ import com.example.pokemoncasestudy.util.BACK_BITMAP
 import com.example.pokemoncasestudy.util.FRONT_BITMAP
 import com.example.pokemoncasestudy.util.POKEMON_NAME
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 
@@ -42,6 +45,7 @@ class PokemonDetailScreenFragment : Fragment() {
         binding = FragmentPokemonDetailScreenBinding.inflate(inflater, container, false)
 
         prepareView()
+        subscribe()
 
         return binding.root
     }
@@ -56,43 +60,63 @@ class PokemonDetailScreenFragment : Fragment() {
         }catch (e: Exception) {
             Log.e(POKEMON_DETAIL_FRAGMENT, e.message.toString())
         }
-
-        subscribe()
     }
 
     private fun subscribe() {
         viewModel.getPokemonDetail(url)
-        lifecycleScope.launchWhenStarted {
-            viewModel.pokemonDetailState.collect {
-                pokemonName = it.name
-                binding.pokemonName.text = getString(R.string.pokemon_name, pokemonName)
-                binding.pokemonHeight.text = getString(R.string.pokemon_height, it.height)
-                binding.pokemonWeight.text = getString(R.string.pokemon_weight, it.weight)
-                binding.overlayButton.text = getString(R.string.detail_screen_button, pokemonName)
-            }
-        }
 
-        lifecycleScope.launchWhenStarted {
-             viewModel.frontBitmapState.collect {
-                 binding.image.setImageBitmap(it)
-                 frontBitmap = it
-             }
-        }
+        // Best practice to collect multiple flows
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.backBitmapState.collect {
-                backBitmap = it
-            }
-        }
+                launch {
+                    viewModel.pokemonDetailState.collect {
+                        pokemonName = it.name
+                        binding.pokemonName.text = getString(R.string.pokemon_name, pokemonName)
+                        binding.pokemonHeight.text = getString(R.string.pokemon_height, it.height)
+                        binding.pokemonWeight.text = getString(R.string.pokemon_weight, it.weight)
+                        binding.overlayButton.text = getString(R.string.detail_screen_button, pokemonName)
+                    }
+                }
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.loadingState.collect {
-                binding.progressBarView.visibility = if (it) View.VISIBLE else View.GONE
+                launch {
+                    viewModel.errorState.collect {
+                        if (it.message != null) {
+                            binding.errorMessage.text = getString(it.message)
+                            binding.connectionError.visibility = View.VISIBLE
+                        }else {
+                            binding.connectionError.visibility = View.GONE
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.frontBitmapState.collect {
+                        binding.image.setImageBitmap(it)
+                        frontBitmap = it
+                    }
+                }
+
+                launch {
+                    viewModel.backBitmapState.collect {
+                        backBitmap = it
+                    }
+                }
+
+                launch {
+                    viewModel.loadingState.collect {
+                        binding.progressBarView.visibility = if (it) View.VISIBLE else View.GONE
+                    }
+                }
             }
         }
     }
 
     private fun prepareView() {
+
+        binding.tryAgainButton.setOnClickListener {
+            viewModel.getPokemonDetail(url)
+        }
 
         binding.overlayButton.setOnClickListener {
             val intent = Intent(activity ,OverlayForegroundService::class.java)

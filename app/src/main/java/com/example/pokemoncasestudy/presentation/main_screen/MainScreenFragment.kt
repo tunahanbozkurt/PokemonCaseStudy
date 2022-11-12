@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +17,7 @@ import com.example.pokemoncasestudy.databinding.FragmentMainScreenBinding
 import com.example.pokemoncasestudy.domain.model.Pokemon
 import com.example.pokemoncasestudy.presentation.main_screen.adapter.PokemonListAdapter
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -26,6 +29,7 @@ class MainScreenFragment : Fragment() {
     private var pokemonList: ArrayList<Pokemon> = arrayListOf()
     private lateinit var adapter: PokemonListAdapter
     private lateinit var layoutManager: LinearLayoutManager
+    private var isPokemonListEmpty: Boolean = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,35 +75,63 @@ class MainScreenFragment : Fragment() {
             }
         })
 
+        binding.paginationTryAgain.setOnClickListener {
+            viewModel.getPokemonList()
+        }
+
         binding.tryAgainButton.setOnClickListener {
-            subscribe()
+            viewModel.getPokemonList()
         }
     }
 
 
     private fun subscribe() {
 
-        if (!viewModel.isOnline()) {
-            binding.connectionError.visibility = View.VISIBLE
-            // return means do not send getPokemonList() request and the others, if there is no internet connection
-            return
-        }else {
-            binding.connectionError.visibility = View.GONE
+        isPokemonListEmpty = viewModel.pokemonDTOListState.value.isEmpty()
+        if (isPokemonListEmpty) {
+            viewModel.getPokemonList()
         }
 
-        viewModel.getPokemonList()
-        lifecycleScope.launchWhenStarted {
-            viewModel.pokemonDTOListState.collect {
-               it.let {
-                   adapter.updateAdapter(it)
-               }
-            }
-        }
+        // Best practice to collect multiple flows
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.loadingState.collect {
-                binding.progressBar.visibility = if (it && layoutManager.itemCount == 0) View.VISIBLE else View.GONE
-                binding.paginationProgress.visibility = if (it && layoutManager.itemCount != 0) View.VISIBLE else View.GONE
+                launch {
+                    viewModel.pokemonDTOListState.collect {
+                        it.let {
+                            adapter.updateAdapter(it)
+                        }
+                    }
+                }
+
+                launch {
+                    viewModel.mainProgressState.collect {
+                        binding.mainProgressBar.visibility = if (it) View.VISIBLE else View.GONE
+                    }
+                }
+
+                launch {
+                    viewModel.paginationProgressState.collect {
+
+                        binding.paginationBelow.visibility = if(it.isLoading || it.isError) View.VISIBLE
+                        else View.GONE
+
+                        binding.paginationBelowProgressBar.visibility = if (it.isLoading && !it.isError) View.VISIBLE
+                        else View.GONE
+
+                        binding.paginationBelowError.visibility = if (it.isError) View.VISIBLE
+                        else View.GONE
+                    }
+                }
+
+                launch {
+                    viewModel.mainErrorState.collect {
+                        binding.errorMessage.text = if (it.message != null) getString(it.message)
+                        else ""
+                        binding.connectionError.visibility = if (it.message != null) View.VISIBLE
+                        else View.GONE
+                    }
+                }
             }
         }
     }

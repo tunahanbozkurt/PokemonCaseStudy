@@ -12,3 +12,6 @@ const val HALF_SECONDS_IN_MILLIS = 500L
 const val POKEMON_NAME = "pokemon_name"
 const val NOTIFICATION_CHANNEL_ID = "overlay_channel"
 const val CHANNEL_NAME = "Background Service"
+const val POKEMON = "pokemon"
+const val LOG_ERROR = "log_error"
+const val LOG_SUCCESS = "log_success"

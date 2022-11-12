@@ -80,7 +80,7 @@ class OverlayForegroundService: Service() {
     }
 
     private fun removeWindow() {
-        popUpWindow!!.close()
+        popUpWindow!!.remove()
         popUpWindow = PopUpWindow(this, PopUpWindowData(pokemonName = pokemonName))
         popUpWindow!!.open()
     }

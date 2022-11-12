@@ -1,14 +1,18 @@
 package com.example.pokemoncasestudy.presentation
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.pokemoncasestudy.R
 import com.example.pokemoncasestudy.databinding.ActivityMainBinding
+import com.example.pokemoncasestudy.util.POKEMON
+import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.AndroidEntryPoint
 
+const val MAIN_ACTIVITY = "main_activity"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -23,6 +27,7 @@ class MainActivity : AppCompatActivity() {
 
         setupNavigationComponents()
         navigationSelectedListener()
+        fcmSubscribeToTopic()
     }
 
     /**
@@ -50,6 +55,17 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             true
+        }
+    }
+
+    /**
+     * Subscribes to pokemon topic to be able to get firebase notification messages
+     */
+    private fun fcmSubscribeToTopic() {
+        FirebaseMessaging.getInstance().subscribeToTopic(POKEMON).addOnSuccessListener {
+            Log.i(MAIN_ACTIVITY, "subscribeToTopicIsSuccess")
+        }.addOnFailureListener {
+            Log.i(MAIN_ACTIVITY, "subscribeToTopicIsFailure")
         }
     }
 }
