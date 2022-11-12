@@ -19,7 +19,7 @@
     <fragment
         android:id="@+id/mainScreenFragment"
         android:name="com.example.pokemoncasestudy.presentation.main_screen.MainScreenFragment"
-        android:label="Pokemons"
+        android:label="@string/pokemons"
         tools:layout="@layout/fragment_main_screen" >
         <action
             android:id="@+id/action_mainScreenFragment_to_pokemonDetailScreenFragment"
@@ -28,7 +28,7 @@
     <fragment
         android:id="@+id/pokemonDetailScreenFragment"
         android:name="com.example.pokemoncasestudy.presentation.pokemon_detail_screen.PokemonDetailScreenFragment"
-        android:label="Pokemon Details"
+        android:label="@string/pokemon_details"
         tools:layout="@layout/fragment_pokemon_detail_screen" >
         <argument
             android:name="url"

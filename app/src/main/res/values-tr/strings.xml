@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PokemonCaseStudy</string>
+    <string name="give_permission">OVERLAY İZNİNİ VER!</string>
+    <string name="pokemon_name">Pokemon Adı: %1$s</string>
+    <string name="pokemon_height">Pokemon Uzunluğu: %1$s</string>
+    <string name="pokemon_weight">Pokemon Ağırlığı: %1$s</string>
+    <string name="detail_screen_button">OVERLAY ÜZERİNDE GÖSTER "%1$s"</string>
+    <string name="close_window_button">PENCEREYİ KAPAT</string>
+    <string name="content_description">açıklama</string>
+    <string name="close_application">Uygulamayı Kapat</string>
+    <string name="try_again">Tekrar Dene</string>
+    <string name="connection_error">İnternet bağlantısı yok.</string>
+    <string name="pokemons">Pokemonlar</string>
+    <string name="pokemon_details">Pokemon Detayları</string>
+
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+</resources>
