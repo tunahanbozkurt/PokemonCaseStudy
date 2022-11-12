@@ -16,7 +16,8 @@ import com.example.pokemoncasestudy.R
 
 class OverlayForegroundService: Service() {
 
-     var pokemonName: String? = null
+    var pokemonName: String? = null
+    var popUpWindow: PopUpWindow? = null
 
     override fun onBind(intent: Intent?): IBinder {
         throw UnsupportedOperationException("Not yet implemented")
@@ -36,10 +37,17 @@ class OverlayForegroundService: Service() {
 
         }catch (e: Exception){}
 
-        val popUpWindow = PopUpWindow(this, PopUpWindowData(pokemonName = pokemonName))
-        popUpWindow.open()
-        return super.onStartCommand(intent, flags, startId)
+        if (popUpWindow == null){
+            popUpWindow = PopUpWindow(this, PopUpWindowData(pokemonName = pokemonName))
+            popUpWindow!!.open()
+        }else {
+            popUpWindow!!.close()
+            popUpWindow = PopUpWindow(this, PopUpWindowData(pokemonName = pokemonName))
+            popUpWindow!!.open()
+        }
 
+
+        return super.onStartCommand(intent, flags, startId)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

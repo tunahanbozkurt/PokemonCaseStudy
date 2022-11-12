@@ -6,16 +6,19 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.pokemoncasestudy.presentation.MainActivity
 import com.example.pokemoncasestudy.R
 import com.example.pokemoncasestudy.databinding.FragmentPermissionScreenBinding
+import com.example.pokemoncasestudy.presentation.MainActivity
+import com.google.android.material.navigation.NavigationView
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -23,8 +26,7 @@ import kotlinx.coroutines.launch
 
 class PermissionScreenFragment : Fragment() {
 
-    private var _binding: FragmentPermissionScreenBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentPermissionScreenBinding
 
     private var job: Job? = null
 
@@ -38,7 +40,7 @@ class PermissionScreenFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPermissionScreenBinding.inflate(inflater, container, false)
+        binding = FragmentPermissionScreenBinding.inflate(inflater, container, false)
         prepareView()
 
         return binding.root
@@ -51,6 +53,8 @@ class PermissionScreenFragment : Fragment() {
     }
 
     private fun prepareView() {
+        hideToolbar()
+
         binding.permissionButton.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermission(activity)
@@ -101,13 +105,15 @@ class PermissionScreenFragment : Fragment() {
         return true
     }
 
+    private fun hideToolbar() {
+        (activity as AppCompatActivity?)?.supportActionBar?.hide()
+        activity?.findViewById<DrawerLayout>(R.id.drawer_layout)?.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         job?.cancel()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        activity?.findViewById<DrawerLayout>(R.id.drawer_layout)?.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+        (activity as AppCompatActivity?)?.supportActionBar?.show()
     }
 }

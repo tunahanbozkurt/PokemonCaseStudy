@@ -38,9 +38,9 @@ class PokemonDetailScreenFragment : Fragment() {
         binding = FragmentPokemonDetailScreenBinding.inflate(inflater, container, false)
 
         prepareView()
-        subscribe()
         return binding.root
     }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +50,9 @@ class PokemonDetailScreenFragment : Fragment() {
         }catch (e: Exception) {
             Log.e(POKEMON_DETAIL_FRAGMENT, e.message.toString())
         }
+
+        subscribe()
+
     }
 
     private fun subscribe() {
@@ -88,10 +91,11 @@ class PokemonDetailScreenFragment : Fragment() {
             createImageFromBitmap(frontBitmap, "frontBitmap")
             createImageFromBitmap(backBitmap, "backBitmap")
             activity?.startService(intent)
+            activity?.finish()
         }
     }
 
-    fun createImageFromBitmap(bitmap: Bitmap?, name: String): String? {
+    private fun createImageFromBitmap(bitmap: Bitmap?, name: String): String? {
         var fileName: String? = name //no .png or .jpg needed
         try {
             val bytes = ByteArrayOutputStream()

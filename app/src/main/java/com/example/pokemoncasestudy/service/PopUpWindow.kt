@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.PixelFormat
 import android.os.Build
-import android.util.Log
 import android.view.*
 import android.widget.Button
 import android.widget.ImageView
@@ -16,6 +15,7 @@ import com.example.pokemoncasestudy.R
 class PopUpWindow(val context: Context, data: PopUpWindowData) {
 
     private val popUpWindow: View
+    private var popUpViewGroup: ViewGroup? = null
     private var mParams: WindowManager.LayoutParams? = null
     private val mWindowManager: WindowManager
     private val layoutInflater: LayoutInflater
@@ -45,12 +45,14 @@ class PopUpWindow(val context: Context, data: PopUpWindowData) {
             close()
         }
 
+        popUpViewGroup = if (popUpWindow.parent != null ) popUpWindow.parent as ViewGroup else null
+
         mParams!!.gravity = Gravity.CENTER
         mWindowManager = context.getSystemService(WINDOW_SERVICE) as WindowManager
     }
 
     fun open() {
-        remove()
+
         try {
             if (popUpWindow.windowToken == null) {
                 if (popUpWindow.parent == null) {
@@ -58,29 +60,18 @@ class PopUpWindow(val context: Context, data: PopUpWindowData) {
                 }
             }
         } catch (e: Exception) {
-            Log.d("Error1", e.toString())
+
         }
     }
 
     fun close() {
         context.stopService(Intent(context, OverlayForegroundService::class.java))
         try {
-            (context.getSystemService(WINDOW_SERVICE) as WindowManager).removeView(popUpWindow)
+            mWindowManager.removeView(popUpWindow)
             popUpWindow.invalidate()
-            (popUpWindow.parent as ViewGroup).removeAllViews()
+            popUpViewGroup?.removeAllViews()
         } catch (e: Exception) {
-            Log.d("Error2", e.toString())
-        }
-    }
 
-    fun remove() {
-        try {
-            (context.getSystemService(WINDOW_SERVICE) as WindowManager).removeView(popUpWindow)
-            popUpWindow.invalidate()
-            (popUpWindow.parent as ViewGroup).removeAllViews()
-
-        } catch (e: Exception) {
-            Log.d("Error2", e.toString())
         }
     }
 }

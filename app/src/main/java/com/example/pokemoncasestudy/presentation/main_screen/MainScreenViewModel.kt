@@ -18,14 +18,24 @@ class MainScreenViewModel @Inject constructor (
     var pokemonDTOListState = MutableStateFlow<ArrayList<Pokemon?>>(arrayListOf())
         private set
 
+    var loadingState = MutableStateFlow(true)
+        private set
+
     fun getPokemonList() {
         viewModelScope.launch {
             listRepo.getPokemonList().collect {
                 when(it) {
-                    is Resource.Error -> {}
-                    is Resource.Loading -> {}
+                    is Resource.Error -> {
+                        loadingState.value = false
+                    }
+                    is Resource.Loading -> {
+                        loadingState.value = true
+                    }
                     is Resource.Success -> {
-                        it.data?.let { pokemonDTOListState.value = it }
+                        it.data?.let {
+                            pokemonDTOListState.value = it
+                            loadingState.value = false
+                        }
                     }
                 }
             }
