@@ -36,9 +36,11 @@ class PokemonListRepositoryImpl(
         }
         catch (e: HttpException) {
             emit(Resource.Error(e.code().toString()))
+            e.printStackTrace()
         }
         catch (e: Exception){
             emit(Resource.Error(e.message.toString()))
+            e.printStackTrace()
         }
 
     }.flowOn(dispatcherIO)

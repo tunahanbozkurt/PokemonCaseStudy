@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import retrofit2.HttpException
 
 class PokemonDetailRepositoryImpl(
     private val api: PokemonAPI,
@@ -25,9 +26,14 @@ class PokemonDetailRepositoryImpl(
                 }else {
                   emit(Resource.Error("Unexpected Error"))
                 }
-
-            }catch (e: Exception) {
+            }
+            catch (e: HttpException) {
                 emit(Resource.Error(e.message.toString()))
+                e.printStackTrace()
+            }
+            catch (e: Exception) {
+                emit(Resource.Error(e.message.toString()))
+                e.printStackTrace()
             }
 
         }.flowOn(dispatcherIO)

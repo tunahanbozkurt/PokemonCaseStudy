@@ -20,7 +20,7 @@
             android:layout_height="100dp"
             tools:layout_editor_absoluteX="107dp"
             tools:layout_editor_absoluteY="243dp"
-            android:contentDescription="" />
+            android:contentDescription="@string/content_description" />
 
         <ImageView
             android:id="@+id/image_back"
@@ -28,7 +28,7 @@
             android:layout_height="100dp"
             tools:layout_editor_absoluteX="225dp"
             tools:layout_editor_absoluteY="243dp"
-            android:contentDescription="" />
+            android:contentDescription="@string/content_description" />
 
     </LinearLayout>
 
@@ -36,13 +36,12 @@
         android:id="@+id/pokemon_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pikachu"
         android:textColor="@color/black"/>
 
     <Button
         android:id="@+id/remove_overlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Close Window"/>
+        android:text="@string/close_window_button"/>
 
 </LinearLayout>

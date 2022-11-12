@@ -5,5 +5,10 @@ package com.example.pokemoncasestudy.util
 
 const val BASE_URL = "https://pokeapi.co/api/v2/"
 const val POKEMON_ENDPOINT = "pokemon"
-const val URL = "url"
-const val POKEMON_DETAIL_FRAGMENT = "pokemon_detail_fragment"
+const val FRONT_BITMAP = "frontBitmap"
+const val BACK_BITMAP = "backBitmap"
+const val THIRTY_SECONDS_IN_MILLIS = 30000
+const val HALF_SECONDS_IN_MILLIS = 500L
+const val POKEMON_NAME = "pokemon_name"
+const val NOTIFICATION_CHANNEL_ID = "overlay_channel"
+const val CHANNEL_NAME = "Background Service"

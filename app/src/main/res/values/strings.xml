@@ -5,4 +5,13 @@
     <string name="give_permission">GIVE ME OVERLAY PERMISSION!</string>
     <string name="open">Open</string>
     <string name="close">Close</string>
+    <string name="pokemon_name">Pokemon Name: %1$s</string>
+    <string name="pokemon_height">Pokemon Height: %1$s</string>
+    <string name="pokemon_weight">Pokemon Weight: %1$s</string>
+    <string name="detail_screen_button">SHOW %1$s IN OVERLAY</string>
+    <string name="close_window_button">CLOSE WINDOW</string>
+    <string name="content_description">description</string>
+    <string name="close_application">Close Application</string>
+    <string name="try_again">Try Again</string>
+    <string name="connection_error">No internet connection.</string>
 </resources>

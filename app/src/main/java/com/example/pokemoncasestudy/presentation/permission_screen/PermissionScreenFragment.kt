@@ -17,8 +17,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.pokemoncasestudy.R
 import com.example.pokemoncasestudy.databinding.FragmentPermissionScreenBinding
-import com.example.pokemoncasestudy.presentation.MainActivity
-import com.google.android.material.navigation.NavigationView
+import com.example.pokemoncasestudy.util.HALF_SECONDS_IN_MILLIS
+import com.example.pokemoncasestudy.util.THIRTY_SECONDS_IN_MILLIS
+import com.example.pokemoncasestudy.util.bringToFront
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,12 +29,13 @@ class PermissionScreenFragment : Fragment() {
 
     private lateinit var binding: FragmentPermissionScreenBinding
 
+    // To observe permission state. It needs to be cancelled in onDestroy method
     private var job: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        checkPermission(activity)
+        checkPermissionAndNavigate(activity)
     }
 
     override fun onCreateView(
@@ -41,19 +43,17 @@ class PermissionScreenFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentPermissionScreenBinding.inflate(inflater, container, false)
+
         prepareView()
 
         return binding.root
     }
 
-    override fun onResume() {
-        super.onResume()
-        job?.cancel()
-        checkPermission(activity)
-    }
-
+    /**
+     * Preparing views here
+     */
     private fun prepareView() {
-        hideToolbar()
+        hideToolbarAndDrawer()
 
         binding.permissionButton.setOnClickListener {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -62,41 +62,54 @@ class PermissionScreenFragment : Fragment() {
         }
     }
 
+    /**
+     * Requests DrawOverlay permission and checks for results
+     */
     @RequiresApi(Build.VERSION_CODES.M)
     private fun requestPermission(activity: Activity?) {
 
-        // If it is false VERSION_CODES >= M
+        // It is false if VERSION_CODES >= M
         if (!isOverlayPermissionGranted(activity)){
             val intent = Intent(
                     Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse(
-                        "package:$context.packageName"
+                        "package:${context?.packageName}"
                     )
             )
             startActivity(intent)
-            observePermissionState(activity)
+            observePermissionStateAndBringTheActivity(activity)
         }
     }
 
-    private fun checkPermission(activity: Activity?) {
+    /**
+     * Checks for DrawOverlays permission and navigates to main screen if it is granted
+     */
+    private fun checkPermissionAndNavigate(activity: Activity?) {
         if (isOverlayPermissionGranted(activity)){
            findNavController()
                .navigate(R.id.action_permissionScreenFragment_to_mainScreenFragment)
         }
     }
 
-    private fun observePermissionState(activity: Activity?) {
+    /**
+     * Observes DrawOverlays permission state for 30 seconds.
+     * Brings the activity related to
+     */
+    private fun observePermissionStateAndBringTheActivity(activity: Activity?) {
         job?.cancel()
         job = lifecycleScope.launch {
             var timeOut = 0
-            while (timeOut < 30000) {
-                delay(500)
-                timeOut += 500
+            while (timeOut < THIRTY_SECONDS_IN_MILLIS) {
+                delay(HALF_SECONDS_IN_MILLIS)
+                timeOut += HALF_SECONDS_IN_MILLIS.toInt()
                 if (isOverlayPermissionGranted(activity)) break
             }
-            activity?.startActivity(Intent(activity, MainActivity::class.java))
+            activity?.bringToFront()
         }
     }
 
+    /**
+     * Checks for DrawOverlays permission and returns true if is granted
+     */
     private fun isOverlayPermissionGranted(activity: Activity?): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return Settings.canDrawOverlays(activity)
@@ -105,15 +118,24 @@ class PermissionScreenFragment : Fragment() {
         return true
     }
 
-    private fun hideToolbar() {
+    /**
+     * Hides toolbar and drawer components
+     */
+    private fun hideToolbarAndDrawer() {
         (activity as AppCompatActivity?)?.supportActionBar?.hide()
         activity?.findViewById<DrawerLayout>(R.id.drawer_layout)?.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        job?.cancel()
+        checkPermissionAndNavigate(activity)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         job?.cancel()
-        activity?.findViewById<DrawerLayout>(R.id.drawer_layout)?.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         (activity as AppCompatActivity?)?.supportActionBar?.show()
+        activity?.findViewById<DrawerLayout>(R.id.drawer_layout)?.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
     }
 }

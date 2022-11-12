@@ -17,6 +17,8 @@ class PokemonDetailScreenViewModel @Inject constructor(
     private val detailRepo: PokemonDetailRepository
 ) : ViewModel() {
 
+    private val dispatcherIO: CoroutineDispatcher = Dispatchers.IO
+
     var pokemonDetailState = MutableStateFlow(PokemonDetail())
         private set
 
@@ -42,11 +44,17 @@ class PokemonDetailScreenViewModel @Inject constructor(
                             loadingState.value = true
                         }
                         is Resource.Success -> {
-                            val frontBitmap = async(Dispatchers.IO) { return@async Picasso.get().load(it.data?.frontImgUrl).get() }.await()
-                            val backBitmap = async(Dispatchers.IO) { return@async Picasso.get().load(it.data?.backImgUrl).get() }.await()
-                            frontBitmapState.value = frontBitmap
-                            backBitmapState.value = backBitmap
-                            it.data?.let { pokemonDetailState.value = it }
+                            val bitmapList = withContext(dispatcherIO) {
+                                return@withContext listOf<Bitmap?>(
+                                    Picasso.get().load(it.data?.frontImgUrl).get(),
+                                    Picasso.get().load(it.data?.backImgUrl).get()
+                                )
+                            }
+                            frontBitmapState.value = bitmapList[0]
+                            backBitmapState.value = bitmapList[1]
+                            it.data?.let { pokemonDetail ->
+                                pokemonDetailState.value = pokemonDetail
+                            }
                             loadingState.value = false
                         }
                     }

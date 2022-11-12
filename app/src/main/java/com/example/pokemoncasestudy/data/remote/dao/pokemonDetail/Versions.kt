@@ -13,11 +13,11 @@ data class Versions(
     @SerializedName("generation-viii")
     val generationViii: GenerationViii?,
     @SerializedName("generation-i")
-    val generationİ: Generationİ?,
+    val generationİ: Generationi?,
     @SerializedName("generation-ii")
-    val generationİi: Generationİi?,
+    val generationİi: Generationii?,
     @SerializedName("generation-iii")
-    val generationİii: Generationİii?,
+    val generationİii: Generationiii?,
     @SerializedName("generation-iv")
     val generationİv: Generationİv?
 )

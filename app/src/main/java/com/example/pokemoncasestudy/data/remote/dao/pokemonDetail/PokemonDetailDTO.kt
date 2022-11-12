@@ -12,7 +12,7 @@ data class PokemonDetailDTO(
     @SerializedName("forms")
     val forms: List<Form>?,
     @SerializedName("game_indices")
-    val gameIndices: List<Gameİndice>?,
+    val gameIndices: List<GameIndice>?,
     @SerializedName("height")
     val height: Int?,
     @SerializedName("held_items")

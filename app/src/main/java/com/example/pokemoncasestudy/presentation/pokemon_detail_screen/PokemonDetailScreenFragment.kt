@@ -12,14 +12,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import com.example.pokemoncasestudy.R
 import com.example.pokemoncasestudy.databinding.FragmentPokemonDetailScreenBinding
 import com.example.pokemoncasestudy.service.OverlayForegroundService
-import com.example.pokemoncasestudy.util.POKEMON_DETAIL_FRAGMENT
+import com.example.pokemoncasestudy.util.BACK_BITMAP
+import com.example.pokemoncasestudy.util.FRONT_BITMAP
+import com.example.pokemoncasestudy.util.POKEMON_NAME
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.ByteArrayOutputStream
 import java.io.FileOutputStream
 
-
+const val POKEMON_DETAIL_FRAGMENT = "pokemon_detail_fragment"
 @AndroidEntryPoint
 class PokemonDetailScreenFragment : Fragment() {
 
@@ -30,6 +33,7 @@ class PokemonDetailScreenFragment : Fragment() {
     private var frontBitmap: Bitmap? = null
     private var backBitmap: Bitmap? = null
     private var url: String? = null
+    private var pokemonName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,6 +42,7 @@ class PokemonDetailScreenFragment : Fragment() {
         binding = FragmentPokemonDetailScreenBinding.inflate(inflater, container, false)
 
         prepareView()
+
         return binding.root
     }
 
@@ -47,21 +52,23 @@ class PokemonDetailScreenFragment : Fragment() {
 
         try {
             url = args.url
+
         }catch (e: Exception) {
             Log.e(POKEMON_DETAIL_FRAGMENT, e.message.toString())
         }
 
         subscribe()
-
     }
 
     private fun subscribe() {
         viewModel.getPokemonDetail(url)
         lifecycleScope.launchWhenStarted {
             viewModel.pokemonDetailState.collect {
-                binding.pokemonName.text = it.name
-                binding.pokemonHeight.text = it.height
-                binding.pokemonWeight.text = it.weight
+                pokemonName = it.name
+                binding.pokemonName.text = getString(R.string.pokemon_name, pokemonName)
+                binding.pokemonHeight.text = getString(R.string.pokemon_height, it.height)
+                binding.pokemonWeight.text = getString(R.string.pokemon_weight, it.weight)
+                binding.overlayButton.text = getString(R.string.detail_screen_button, pokemonName)
             }
         }
 
@@ -86,30 +93,33 @@ class PokemonDetailScreenFragment : Fragment() {
     }
 
     private fun prepareView() {
+
         binding.overlayButton.setOnClickListener {
             val intent = Intent(activity ,OverlayForegroundService::class.java)
-            createImageFromBitmap(frontBitmap, "frontBitmap")
-            createImageFromBitmap(backBitmap, "backBitmap")
-            activity?.startService(intent)
-            activity?.finish()
+            intent.putExtra(POKEMON_NAME, pokemonName)
+            val frontResult = addBitmapToInternalStorage(frontBitmap, FRONT_BITMAP)
+            val backResult = addBitmapToInternalStorage(backBitmap, BACK_BITMAP)
+            if (frontResult && backResult) {
+                activity?.startService(intent)
+                activity?.finish()
+            }
         }
     }
 
-    private fun createImageFromBitmap(bitmap: Bitmap?, name: String): String? {
-        var fileName: String? = name //no .png or .jpg needed
+    /**
+     * Writes bitmap to internal storage to use later
+     */
+    private fun addBitmapToInternalStorage(bitmap: Bitmap?, name: String): Boolean{
         try {
             val bytes = ByteArrayOutputStream()
             bitmap?.compress(Bitmap.CompressFormat.PNG, 100, bytes)
-            val fo: FileOutputStream? = activity?.openFileOutput(fileName, Context.MODE_PRIVATE)
+            val fo: FileOutputStream? = activity?.openFileOutput(name, Context.MODE_PRIVATE)
             fo?.write(bytes.toByteArray())
-            // remember close file output
             fo?.close()
-        } catch (e: java.lang.Exception) {
-            e.printStackTrace()
-            fileName = null
+        } catch (e: Exception) {
+            Log.e(POKEMON_DETAIL_FRAGMENT, e.message.toString())
+            return false
         }
-        return fileName
+        return true
     }
-
-
 }

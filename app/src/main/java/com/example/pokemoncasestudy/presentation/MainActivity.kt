@@ -44,10 +44,7 @@ class MainActivity : AppCompatActivity() {
         binding.navView.setNavigationItemSelectedListener {
             when(it.itemId) {
                 R.id.close_app -> {
-
-                }
-                else -> {
-
+                    this.finish()
                 }
             }
             true
