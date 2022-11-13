@@ -14,12 +14,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
-import com.example.pokemoncasestudy.R
 import com.example.pokemoncasestudy.databinding.FragmentPokemonDetailScreenBinding
 import com.example.pokemoncasestudy.service.OverlayForegroundService
-import com.example.pokemoncasestudy.util.BACK_BITMAP
-import com.example.pokemoncasestudy.util.FRONT_BITMAP
-import com.example.pokemoncasestudy.util.POKEMON_NAME
+import com.example.pokemoncasestudy.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
@@ -46,6 +43,8 @@ class PokemonDetailScreenFragment : Fragment() {
 
         prepareView()
         subscribe()
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
 
         return binding.root
     }
@@ -69,13 +68,15 @@ class PokemonDetailScreenFragment : Fragment() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
 
+                // I just wanted to show you I can use DataBinding either
+                // ViewBinding is faster and more efficient than DataBinding
                 launch {
                     viewModel.pokemonDetailState.collect {
                         pokemonName = it.name
-                        binding.pokemonName.text = getString(R.string.pokemon_name, pokemonName)
-                        binding.pokemonHeight.text = getString(R.string.pokemon_height, it.height)
-                        binding.pokemonWeight.text = getString(R.string.pokemon_weight, it.weight)
-                        binding.overlayButton.text = getString(R.string.detail_screen_button, pokemonName)
+                       // binding.pokemonName.text = getString(R.string.pokemon_name, pokemonName)
+                       // binding.pokemonHeight.text = getString(R.string.pokemon_height, it.height)
+                       // binding.pokemonWeight.text = getString(R.string.pokemon_weight, it.weight)
+                       // binding.overlayButton.text = getString(R.string.detail_screen_button, pokemonName)
                     }
                 }
 
@@ -83,9 +84,9 @@ class PokemonDetailScreenFragment : Fragment() {
                     viewModel.errorState.collect {
                         if (it.message != null) {
                             binding.errorMessage.text = getString(it.message)
-                            binding.connectionError.visibility = View.VISIBLE
+                            binding.connectionError.setVisible()
                         }else {
-                            binding.connectionError.visibility = View.GONE
+                            binding.connectionError.setGone()
                         }
                     }
                 }

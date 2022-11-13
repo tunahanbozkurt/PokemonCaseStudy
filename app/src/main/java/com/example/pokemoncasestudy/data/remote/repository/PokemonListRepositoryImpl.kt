@@ -5,15 +5,12 @@ import com.example.pokemoncasestudy.data.remote.network.PokemonAPI
 import com.example.pokemoncasestudy.domain.model.Pokemon
 import com.example.pokemoncasestudy.domain.repository.PokemonListRepository
 import com.example.pokemoncasestudy.util.Resource
-import com.example.pokemoncasestudy.util.isOnline
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import retrofit2.HttpException
 import java.io.IOException
-import kotlin.coroutines.coroutineContext
 
 class PokemonListRepositoryImpl(
     private val api: PokemonAPI,
