@@ -43,8 +43,6 @@ class PokemonDetailScreenFragment : Fragment() {
 
         prepareView()
         subscribe()
-        binding.viewModel = viewModel
-        binding.lifecycleOwner = this
 
         return binding.root
     }
@@ -114,6 +112,9 @@ class PokemonDetailScreenFragment : Fragment() {
     }
 
     private fun prepareView() {
+
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
 
         binding.tryAgainButton.setOnClickListener {
             viewModel.getPokemonDetail(url)
