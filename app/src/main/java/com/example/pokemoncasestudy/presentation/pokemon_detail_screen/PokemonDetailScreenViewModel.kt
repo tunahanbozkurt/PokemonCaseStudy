@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokemoncasestudy.domain.model.PokemonDetail
-import com.example.pokemoncasestudy.domain.repository.PokemonDetailRepository
+import com.example.pokemoncasestudy.domain.usecase.UseCase
 import com.example.pokemoncasestudy.util.ErrorState
 import com.example.pokemoncasestudy.util.LOG_ERROR
 import com.example.pokemoncasestudy.util.LOG_SUCCESS
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PokemonDetailScreenViewModel @Inject constructor(
-    private val detailRepo: PokemonDetailRepository,
+    private val useCase: UseCase,
     private val firebaseAnalytics: FirebaseAnalytics
 ) : ViewModel() {
 
@@ -41,10 +41,10 @@ class PokemonDetailScreenViewModel @Inject constructor(
         private set
 
 
-    fun getPokemonDetail(url: String?) {
+    fun getPokemonDetail(page: String?) {
         viewModelScope.launch {
-            if (url != null) {
-                val result = detailRepo.getPokemonDetail(url)
+            if (page != null) {
+                val result = useCase.getPokemonDetailUseCase(page)
                 result.collect {
                     when(it) {
                         is Resource.Error -> {

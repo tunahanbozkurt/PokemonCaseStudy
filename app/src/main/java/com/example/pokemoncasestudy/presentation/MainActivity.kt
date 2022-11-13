@@ -2,15 +2,23 @@ package com.example.pokemoncasestudy.presentation
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.example.pokemoncasestudy.R
 import com.example.pokemoncasestudy.databinding.ActivityMainBinding
 import com.example.pokemoncasestudy.util.POKEMON
+import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 const val MAIN_ACTIVITY = "main_activity"
 
@@ -18,6 +26,8 @@ const val MAIN_ACTIVITY = "main_activity"
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var remoteConfig: FirebaseRemoteConfig
+    private lateinit var welcomeMessage: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +37,10 @@ class MainActivity : AppCompatActivity() {
 
         setupNavigationComponents()
         navigationSelectedListener()
-        fcmSubscribeToTopic()
+
+        subscribe()
+
+
     }
 
     /**
@@ -58,6 +71,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun subscribe() {
+        lifecycleScope.launch {
+            fcmSubscribeToTopic()
+            setupRemoteConfig()
+            showWelcomeMessage()
+        }
+    }
+
     /**
      * Subscribes to pokemon topic to be able to get firebase notification messages
      */
@@ -67,5 +88,40 @@ class MainActivity : AppCompatActivity() {
         }.addOnFailureListener {
             Log.i(MAIN_ACTIVITY, "subscribeToTopicIsFailure")
         }
+    }
+
+    /**
+     * Setups firebase remote config
+     */
+    private suspend fun setupRemoteConfig() {
+        remoteConfig = Firebase.remoteConfig
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 0
+        }
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        try {
+            remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults).await()
+            welcomeMessage = remoteConfig.getString("welcome_message")
+            fetchRemoteConfig()
+
+        }catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
+    /**
+     * Updates remote config values
+     */
+    private suspend fun fetchRemoteConfig() {
+        remoteConfig.fetchAndActivate().await()
+        welcomeMessage = remoteConfig.getString("welcome_message")
+    }
+
+    /**
+     * Shows welcome message to user which is come from remote config
+     */
+    private fun showWelcomeMessage() {
+        Toast.makeText(this, welcomeMessage, Toast.LENGTH_LONG).show()
     }
 }

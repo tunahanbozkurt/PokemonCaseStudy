@@ -6,8 +6,15 @@ import com.example.pokemoncasestudy.data.remote.repository.PokemonDetailReposito
 import com.example.pokemoncasestudy.data.remote.repository.PokemonListRepositoryImpl
 import com.example.pokemoncasestudy.domain.repository.PokemonDetailRepository
 import com.example.pokemoncasestudy.domain.repository.PokemonListRepository
+import com.example.pokemoncasestudy.domain.usecase.GetPokemonDetailUseCase
+import com.example.pokemoncasestudy.domain.usecase.GetPokemonListUseCase
+import com.example.pokemoncasestudy.domain.usecase.UseCase
 import com.example.pokemoncasestudy.util.BASE_URL
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,5 +58,29 @@ object AppModule {
     @Singleton
     fun provideFirebaseAnalytics(@ApplicationContext context: Context): FirebaseAnalytics {
         return FirebaseAnalytics.getInstance(context)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideUseCase(
+        pokemonDetailRepository: PokemonDetailRepository,
+        pokemonListRepository: PokemonListRepository
+    ): UseCase {
+        return UseCase(
+            getPokemonDetailUseCase = GetPokemonDetailUseCase(pokemonDetailRepository),
+            getPokemonListUseCase = GetPokemonListUseCase(pokemonListRepository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemoteConfig(): FirebaseRemoteConfig {
+        val remoteConfig = Firebase.remoteConfig
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 3600
+        }
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        return remoteConfig
     }
 }
