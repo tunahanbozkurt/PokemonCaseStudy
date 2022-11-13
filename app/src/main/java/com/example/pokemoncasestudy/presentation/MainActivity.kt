@@ -11,6 +11,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.example.pokemoncasestudy.R
 import com.example.pokemoncasestudy.databinding.ActivityMainBinding
 import com.example.pokemoncasestudy.util.POKEMON
+import com.example.pokemoncasestudy.util.WELCOME_MESSAGE
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -39,7 +40,6 @@ class MainActivity : AppCompatActivity() {
         navigationSelectedListener()
 
         subscribe()
-
 
     }
 
@@ -101,7 +101,7 @@ class MainActivity : AppCompatActivity() {
         remoteConfig.setConfigSettingsAsync(configSettings)
         try {
             remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults).await()
-            welcomeMessage = remoteConfig.getString("welcome_message")
+            welcomeMessage = remoteConfig.getString(WELCOME_MESSAGE)
             fetchRemoteConfig()
 
         }catch (e: Exception) {
@@ -115,7 +115,7 @@ class MainActivity : AppCompatActivity() {
      */
     private suspend fun fetchRemoteConfig() {
         remoteConfig.fetchAndActivate().await()
-        welcomeMessage = remoteConfig.getString("welcome_message")
+        welcomeMessage = remoteConfig.getString(WELCOME_MESSAGE)
     }
 
     /**
