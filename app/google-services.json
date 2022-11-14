@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "495114831103",
+    "project_id": "pokemoncasestudy",
+    "storage_bucket": "pokemoncasestudy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:495114831103:android:6b30237cfcb3a2ffaa78ca",
+        "android_client_info": {
+          "package_name": "com.example.pokemoncasestudy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "495114831103-d31qkh36e4f4uah4gbdd45vrkj35n718.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhzb3GaVUfQCDS5cXYCxOjOm5MzpRiyZw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "495114831103-d31qkh36e4f4uah4gbdd45vrkj35n718.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

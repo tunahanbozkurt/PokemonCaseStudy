@@ -36,6 +36,7 @@ class PokemonListRepositoryImpl(
                 emit(Resource.Error(R.string.unexpected_error))
             }
         }
+        // Please check the comments in "PokemonDetailRepositoryImpl" to get detailed explanation.
         catch (e: IOException) {
            emit(Resource.Error(R.string.connection_error))
         }
